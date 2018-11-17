@@ -1,0 +1,40 @@
+###############################################################################
+#                          Generated on phpdocker.io                          #
+###############################################################################
+version: "3.1"
+services:
+
+    mysql:
+      image: mysql:5.6
+      container_name: kohana-mysql
+      working_dir: /application
+       volumes:
+        - .:/application
+        - ./phpdocker/dump.sql:/docker-entrypoint-initdb.d/dump.sql
+      #  - ./phpdocker/mysql:/var/lib/mysql
+      environment:
+        - MYSQL_ROOT_PASSWORD=qRXaJv6uk9KS4KTQQD564
+        - MYSQL_DATABASE=wc
+        - MYSQL_USER=webapp
+        - MYSQL_PASSWORD=46Cf8dpN5bnGUGc2WAzvQ
+      ports:
+        - "10001:3306"
+
+    webserver:
+      image: nginx:alpine
+      container_name: kohana-webserver
+      working_dir: /application
+      volumes:
+          - .:/application
+          - ./phpdocker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+      ports:
+       - "9999:80"
+
+    php-fpm:
+      build: phpdocker/php-fpm
+      container_name: kohana-php-fpm
+      working_dir: /application
+      volumes:
+        - .:/application
+        - ./phpdocker/php-fpm/php-ini-overrides.ini:/etc/php5/fpm/conf.d/99-overrides.ini
+
